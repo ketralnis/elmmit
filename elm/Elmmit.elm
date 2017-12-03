@@ -54,8 +54,7 @@ update msg model =
         DidFetchLinks (Ok link_listing) ->
             ( { model | link_listing = Just link_listing } , Cmd.none)
         DidFetchLinks (Err _) ->
-            Debug.crash "http failure"
-            -- ( model, Cmd.none)
+            Debug.crash "http or decode failure"
 
 fetchLinks : Cmd Msg
 fetchLinks =

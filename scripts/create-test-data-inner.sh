@@ -9,5 +9,4 @@ for num in `seq 1 20`; do
         --title="title #${num}" \
         --body="body${num}" \
         --url="http://www.google.com/?q=${num}"
-
-done
+done | wc -l

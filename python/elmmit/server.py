@@ -71,8 +71,14 @@ def slash():
     return Response(
         """<html>
             <body>
-                You probably meant to go to
-                <a href="http://localhost:8000">http://localhost:8000</a>
+                <p>
+                    You probably meant to go to
+                    <a href="http://localhost:8000">http://localhost:8000</a>
+                </p>
+                <p>
+                    But you can see the API docs at
+                    <a href="/docs">/docs</a> if you want
+                </p>
             </body>
         </html>""",
         mimetype="text/html")
