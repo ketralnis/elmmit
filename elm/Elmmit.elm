@@ -86,6 +86,9 @@ fetchLinks =
         Http.send DidFetchLinks (Http.get url decodeLinkListing)
 
 
+-- generated with http://eeue56.github.io/json-to-elm/ & some tweaks. elm
+-- decoders are notoriously annoying to build but the "hard" cases for elmmit
+-- are both covered by this one
 decodeLinkListing : Json.Decode.Decoder LinkListing
 decodeLinkListing =
     Json.Decode.map LinkListing

@@ -1,7 +1,6 @@
 Vagrant.configure(2) do |config|
 
-  config.vm.box = "trusty-cloud-image"
-  config.vm.box_url = "https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
+  config.vm.box = 'ubuntu/trusty64'
 
   guest_ip = "dhcp"
 
@@ -25,7 +24,7 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell", inline: <<-SCRIPT
     # install everything
 
-    set -ev
+    set -e
 
     if ! which npm; then
         echo installing node
