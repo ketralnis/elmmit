@@ -1,0 +1,5 @@
+.vagrant
+node_modules
+elmmit.egg-info
+deb-cache
+*.pyc
