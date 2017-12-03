@@ -8,64 +8,89 @@ import Json.Decode exposing (field)
 
 
 type alias LinkListing =
-    { links: List Link }
+    { links : List Link }
+
 
 type alias Link =
-    { link_id: String
-    , title: String }
+    { link_id : String
+    , title : String
+    }
+
 
 type alias Model =
     { link_listing : Maybe LinkListing }
 
-init : (Model, Cmd Msg)
+
+init : ( Model, Cmd Msg )
 init =
     ( Model Nothing
-    , Cmd.none )
+    , Cmd.none
+    )
+
 
 type Msg
     = PleaseFetchLinks
     | DidFetchLinks (Result Http.Error LinkListing)
 
+
 view : Model -> Html Msg
 view model =
     -- this is a good example of my legendary front-end skills
     let
-        link_listing = case model.link_listing of
-            Nothing ->
-                div [] [ text "links not fetched yet"
-                       , button [ onClick PleaseFetchLinks ] [ text "fetch links!" ] ]
-            Just link_listing ->
-                ul [] (List.map (\link -> li [] [ text link.title ])
-                                link_listing.links)
+        link_listing =
+            case model.link_listing of
+                Nothing ->
+                    div []
+                        [ text "links not fetched yet"
+                        , button [ onClick PleaseFetchLinks ] [ text "fetch links!" ]
+                        ]
 
-            --Just links ->
-            --    div [] [ text "some links!" ]
+                Just link_listing ->
+                    ul []
+                        (List.map (\link -> li [] [ text link.title ])
+                            link_listing.links
+                        )
 
-    in div [] [ link_listing ]
+        --Just links ->
+        --    div [] [ text "some links!" ]
+    in
+        div [] [ link_listing ]
 
 
-update : Msg -> Model -> (Model, Cmd Msg)
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         PleaseFetchLinks ->
-            let url = "http://localhost:8080/api/get-best-links"
-                request = Http.get url
-            in (model, fetchLinks)
+            let
+                url =
+                    "http://localhost:8080/api/get-best-links"
+
+                request =
+                    Http.get url
+            in
+                ( model, fetchLinks )
+
         DidFetchLinks (Ok link_listing) ->
-            ( { model | link_listing = Just link_listing } , Cmd.none)
+            ( { model | link_listing = Just link_listing }, Cmd.none )
+
         DidFetchLinks (Err _) ->
             Debug.crash "http or decode failure"
 
+
 fetchLinks : Cmd Msg
 fetchLinks =
-  let url = "http://localhost:8080/api/get-best-links"
-  in
-      Http.send DidFetchLinks (Http.get url decodeLinkListing)
+    let
+        url =
+            "http://localhost:8080/api/get-best-links"
+    in
+        Http.send DidFetchLinks (Http.get url decodeLinkListing)
+
 
 decodeLinkListing : Json.Decode.Decoder LinkListing
 decodeLinkListing =
     Json.Decode.map LinkListing
         (field "links" (Json.Decode.list decodeLink))
+
 
 decodeLink : Json.Decode.Decoder Link
 decodeLink =
@@ -73,8 +98,11 @@ decodeLink =
         (field "link_id" Json.Decode.string)
         (field "title" Json.Decode.string)
 
+
 subscriptions : Model -> Sub Msg
-subscriptions model = Sub.none
+subscriptions model =
+    Sub.none
+
 
 main : Program Never Model Msg
 main =
