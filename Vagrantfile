@@ -11,8 +11,8 @@ Vagrant.configure(2) do |config|
     config.vm.network "private_network", ip: guest_ip
   end
 
-  # http. puts the web UI at http://localhost:8080
   config.vm.network "forwarded_port", host: 8080, guest: 8080
+  config.vm.network "forwarded_port", host: 8000, guest: 8000
   config.vm.hostname = "elmmit.local"
 
   config.vm.synced_folder  ".", "/home/vagrant/elmmit"
@@ -22,18 +22,44 @@ Vagrant.configure(2) do |config|
 
     set -ev
 
-    apt-get update
-    apt-get install -y nodejs-legacy npm sqlite3 python-nose python-setuptools python-flask
+    echo installing system packages
+    if ! which npm; then
+        apt-get update
+        apt-get install -y \
+            nodejs-legacy \
+            npm sqlite3 \
+            python-nose \
+            python-setuptools \
+            python-flask
+    fi
 
-    npm install -g elm
+    if ! which elm; then
+        echo installing elm
+        npm install -g elm
+    fi
 
+    echo installing python package
     cd ~vagrant/elmmit/python
     python ./setup.py develop
     nosetests
-    # cp -vp ~vagrant/elmmit/elmmit-server.rc /etc/init/elmmit-server.conf
 
-    # echo 'export PATH=$PATH:/home/vagrant/elmmit/node_modules' >> /home/vagrant/.bash_profile
-    # chown vagrant:vagrant /home/vagrant/.bash_profile
+    echo starting python server
+    cp -vp ~vagrant/elmmit/elmmit-server.conf /etc/init/elmmit-server.conf
+    stop elmmit-server || true # in case it was already running
+    start elmmit-server
+
+    cd ~vagrant
+    echo creating test data
+    su - vagrant -c "sh -e elmmit/scripts/create-test-data-inner.sh"
+
+    echo '*********************************************************************'
+    echo 'Success!'
+    echo ''
+    echo 'You should run ./scripts/elm-reactor.sh to start the elm environment'
+    echo 'and go to http://localhost:8000'
+    echo 'and open your code editor to the elm directory'
+    echo 'and start hacking!'
+    echo '*********************************************************************'
   SCRIPT
 
   if File.exist? "deb-cache" then

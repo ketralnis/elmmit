@@ -66,16 +66,34 @@ for path, route in api.api_routes.items():
                      methods=[route.method])
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'OPTIONS'])
 def slash():
-    return 'Hello, World!'
+    return Response(
+        """<html>
+            <body>
+                You probably meant to go to
+                <a href="http://localhost:8000">http://localhost:8000</a>
+            </body>
+        </html>""",
+        mimetype="text/html")
+
+
+@app.after_request
+def add_cors(response):
+    # we run the python server on one port and the elm reactor on a different
+    # port, so we need to allow cross-origin requests. note! in a real
+    # application this exposes you to all sorts of bad juujuu
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST'
+    return response
 
 
 def server(db_path, port, debug=True, host='0.0.0.0'):
-    # make sure we can connect to the DB before we start anything, since every request will
-    # try to connect individually and we'd rather fail before that
+    # make sure we can connect to the DB before we start anything, since every
+    # request will try to connect individually and we'd rather fail before that
     conn = db.connect_db(db_path)
-    conn.execute('select 1')
+    assert list(conn.execute('select 1'))
+    del conn
 
     with app.app_context():
         app.config['db_path'] = db_path
