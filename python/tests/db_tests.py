@@ -43,8 +43,8 @@ class TestDb(unittest.TestCase):
                          child_comment.parent_id,
                          parent_comment.comment_id)
 
-        comments = db.get_comments_for_link(self.conn, link.link_id)
-        ids = set(c.comment_id for c in comments)
+        comment_listing = db.get_comments_for_link(self.conn, link.link_id)
+        ids = set(c.comment_id for c in comment_listing.comments)
         self.assertEqual(ids,
                          set([parent_comment.comment_id,
                               child_comment.comment_id]))
@@ -107,8 +107,8 @@ class TestDb(unittest.TestCase):
         pager = None
 
         while True:
-            links, pager = db_fn(self.conn, pager=pager, limit=25)
-            for link in links:
+            link_listing = db_fn(self.conn, pager=pager, limit=25)
+            for link in link_listing.links:
                 yield link
-            if pager is None:
+            if link_listing.pager is None:
                 break

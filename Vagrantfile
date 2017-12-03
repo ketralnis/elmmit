@@ -27,13 +27,13 @@ Vagrant.configure(2) do |config|
 
     npm install -g elm
 
-    cd ~vagrant/elmmit/server
-    nosetests
+    cd ~vagrant/elmmit/python
     python ./setup.py develop
+    nosetests
     # cp -vp ~vagrant/elmmit/elmmit-server.rc /etc/init/elmmit-server.conf
 
-    echo 'export PATH=$PATH:/home/vagrant/elmmit/node_modules' >> /home/vagrant/.bash_profile
-    chown vagrant:vagrant /home/vagrant/.bash_profile
+    # echo 'export PATH=$PATH:/home/vagrant/elmmit/node_modules' >> /home/vagrant/.bash_profile
+    # chown vagrant:vagrant /home/vagrant/.bash_profile
   SCRIPT
 
   if File.exist? "deb-cache" then
