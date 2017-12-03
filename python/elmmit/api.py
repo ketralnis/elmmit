@@ -91,7 +91,7 @@ api_route('/api/get-comment', 'GET',
           returns=models.Comment)
 
 api_route('/api/get-comments-for-link', 'GET',
-          'Get all of the comments on a given link',
+          'Get all of the comments on a link',
           {'link_id': Field()},
           db.get_comments_for_link,
           returns=models.CommentListing)

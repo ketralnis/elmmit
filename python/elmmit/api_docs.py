@@ -20,7 +20,10 @@ def make_docs(route_descriptor):
         docs.append("Arguments:")
 
         for name, field in sorted(route.fields.items()):
-            docs.append("\t* %s: %s" % (name, field.description))
+            if field.description:
+                docs.append("\t* %s: %s" % (name, field.description))
+            else:
+                docs.append("\t* %s" % (name,))
             docs.append("\t\t- type: %s" % field.type.__name__)
             docs.append("\t\t- required: %s" % field.required)
             if not field.required:

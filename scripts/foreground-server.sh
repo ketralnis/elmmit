@@ -1,5 +1,5 @@
 #!/bin/sh
 
-set -e
+set -ev
 
-exec vagrant ssh -c 'python -m elmmit.cmd server -f elmmit.db'
+exec vagrant ssh -c 'python -m elmmit.cmd -f elmmit.db server'

@@ -36,6 +36,7 @@ def connect_db(fname):
         ) WITHOUT ROWID;
         CREATE INDEX IF NOT EXISTS links_by_author ON links(author_id);
         CREATE INDEX IF NOT EXISTS links_by_points ON links(points DESC);
+        CREATE INDEX IF NOT EXISTS links_by_created ON links(created DESC);
 
         CREATE TABLE IF NOT EXISTS comments (
             comment_id NOT NULL PRIMARY KEY,
@@ -97,7 +98,7 @@ def transaction(fn):
 
 @transaction
 def create_author(conn, author_id):
-    "Create the given author ID if it doesn't exist"
+    "Create an author ID if it doesn't already exist"
 
     # a note on author_ids: we let the user specify the author_id with capital
     # letters if they want, but we always use the lower-case version in the
@@ -111,7 +112,7 @@ def create_author(conn, author_id):
 
 
 def get_author(conn, author_id):
-    "Find the given author by name"
+    "Find an author by name"
 
     rows = conn.execute(
         """
@@ -178,7 +179,7 @@ def get_comment(conn, comment_id):
 
 def get_comments_for_link(conn, link_id):
     """
-    Get all of the comments for a given link.
+    Get all of the comments for a link.
 
     No pagination, sorting, or tree-building is done
     """
